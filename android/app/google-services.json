@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "128696514938",
+    "project_id": "framefolio-efc6a",
+    "storage_bucket": "framefolio-efc6a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128696514938:android:2be68aa270caba4f4c3ec3",
+        "android_client_info": {
+          "package_name": "com.framefolio.frame_folio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9YM6ddE2GtLPu9VbnsUEJTTIPi7rwWaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
