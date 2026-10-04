@@ -43,13 +43,19 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
   Future<void> _pickCoverPhoto() async {
     final file = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 85,
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 75,
     );
     if (file != null) setState(() => _coverImage = file);
   }
 
   Future<void> _pickPortfolioImages() async {
-    final files = await _picker.pickMultiImage(imageQuality: 80);
+    final files = await _picker.pickMultiImage(
+      maxWidth: 1200,
+      maxHeight: 1200,
+      imageQuality: 75,
+    );
     if (files.isNotEmpty) {
       setState(() => _portfolioImages.addAll(files));
     }
@@ -80,31 +86,23 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
       _isUploading = true;
       _uploadedCount = 0;
       _totalToUpload = 1 + _portfolioImages.length;
-      _uploadStatus = 'Uploading cover photo…';
+      _uploadStatus = 'Uploading portfolio photos…';
     });
 
     try {
-      final coverUrl = await _storageService.uploadCoverPhoto(_coverImage!, uid);
+      final coverFuture = _storageService.uploadCoverPhoto(_coverImage!, uid);
+      final portfolioFutures = _portfolioImages
+          .map((img) => _storageService.uploadPortfolioImage(img, uid))
+          .toList();
+
+      final results = await Future.wait([coverFuture, ...portfolioFutures]);
+      final coverUrl = results.first;
+      final portfolioUrls = List<String>.from(results.sublist(1));
+
       setState(() {
-        _uploadedCount = 1;
-        _uploadStatus = 'Uploading portfolio images…';
+        _uploadedCount = _totalToUpload;
+        _uploadStatus = 'Saving to database…';
       });
-
-      final List<String> portfolioUrls = [];
-      for (int i = 0; i < _portfolioImages.length; i++) {
-        final url = await _storageService.uploadPortfolioImage(
-          _portfolioImages[i],
-          uid,
-        );
-        portfolioUrls.add(url);
-        setState(() {
-          _uploadedCount = i + 2;
-          _uploadStatus =
-              'Uploading image ${i + 1} of ${_portfolioImages.length}…';
-        });
-      }
-
-      setState(() => _uploadStatus = 'Saving to database…');
       final model = PhotographerModel(
         photographerId: uid,
         name: _nameController.text.trim(),

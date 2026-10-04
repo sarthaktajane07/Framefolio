@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_constants.dart';
+import 'app_network_image.dart';
 
 /// Browse-screen photographer card with luxury editorial styling, vignette overlay, and metadata.
 class PhotographerCard extends StatefulWidget {
@@ -237,42 +237,10 @@ class _PhotographerCardState extends State<PhotographerCard> {
   }
 
   Widget _buildCoverImage(String url) {
-    if (url.isEmpty) {
-      return Container(
-        color: const Color(AppConstants.secondaryBgValue),
-        child: const Center(
-          child: Icon(
-            Icons.camera_alt_outlined,
-            color: Color(AppConstants.textMutedValue),
-            size: 32,
-          ),
-        ),
-      );
-    }
-    return CachedNetworkImage(
+    return AppNetworkImage(
       imageUrl: url,
       width: double.infinity,
       fit: BoxFit.cover,
-      placeholder: (_, __) => Container(
-        color: const Color(AppConstants.secondaryBgValue),
-        child: const Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: Color(AppConstants.primaryColor),
-          ),
-        ),
-      ),
-      errorWidget: (_, __, ___) => Image.network(
-        url,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          color: const Color(AppConstants.secondaryBgValue),
-          child: const Center(
-            child: Icon(Icons.broken_image_outlined, color: Colors.grey, size: 28),
-          ),
-        ),
-      ),
     );
   }
 }

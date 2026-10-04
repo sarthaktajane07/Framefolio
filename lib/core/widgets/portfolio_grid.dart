@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_constants.dart';
+import 'app_network_image.dart';
 
 /// Displays a photographer's portfolio images in a responsive 2-column GridView with luxury styling.
 class PortfolioGrid extends StatelessWidget {
@@ -70,28 +70,9 @@ class PortfolioGrid extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                CachedNetworkImage(
+                AppNetworkImage(
                   imageUrl: url,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(
-                    color: const Color(0xFF181B26),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Color(AppConstants.primaryColor),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (_, __, ___) => Image.network(
-                    url,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: const Color(0xFF181B26),
-                      child: const Center(
-                        child: Icon(Icons.broken_image_outlined, color: Colors.grey),
-                      ),
-                    ),
-                  ),
                 ),
                 Positioned(
                   bottom: 6,
@@ -132,19 +113,9 @@ class PortfolioGrid extends StatelessWidget {
               maxScale: 4.0,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: CachedNetworkImage(
+                child: AppNetworkImage(
                   imageUrl: url,
                   fit: BoxFit.contain,
-                  placeholder: (_, __) => const Center(
-                    child: CircularProgressIndicator(
-                      color: Color(AppConstants.primaryColor),
-                    ),
-                  ),
-                  errorWidget: (_, __, ___) => const Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.white,
-                    size: 48,
-                  ),
                 ),
               ),
             ),

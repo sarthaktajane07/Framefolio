@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/widgets/app_network_image.dart';
 import '../../core/widgets/portfolio_grid.dart';
 import '../../core/widgets/loading_widget.dart';
 import '../../models/photographer_model.dart';
@@ -197,35 +197,10 @@ class _PhotographerProfileScreenState extends State<PhotographerProfileScreen> {
                 children: [
                   Hero(
                     tag: 'photographer_cover_${p.photographerId}',
-                    child: p.coverPhotoUrl.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: p.coverPhotoUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) => const LoadingWidget(),
-                            errorWidget: (_, __, ___) => Image.network(
-                              p.coverPhotoUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(
-                                color:
-                                    const Color(AppConstants.secondaryBgValue),
-                                child: const Icon(
-                                  Icons.camera_alt_outlined,
-                                  size: 64,
-                                  color: Color(AppConstants.textMutedValue),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: const Color(AppConstants.secondaryBgValue),
-                            child: const Center(
-                              child: Icon(
-                                Icons.camera_alt_outlined,
-                                size: 64,
-                                color: Color(AppConstants.textMutedValue),
-                              ),
-                            ),
-                          ),
+                    child: AppNetworkImage(
+                      imageUrl: p.coverPhotoUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Positioned.fill(
                     child: DecoratedBox(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/widgets/app_network_image.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/loading_widget.dart';
 import '../../models/photographer_model.dart';
@@ -221,18 +221,9 @@ class _PortfolioImageTile extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                CachedNetworkImage(
+                AppNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(color: Colors.black26),
-                  errorWidget: (_, __, ___) => Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: Colors.grey.shade800,
-                      child: const Icon(Icons.broken_image, color: Colors.white54),
-                    ),
-                  ),
                 ),
                 Positioned(
                   top: 8,
