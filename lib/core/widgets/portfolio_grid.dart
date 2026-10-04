@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../constants/app_constants.dart';
 
-/// Displays a photographer's portfolio images in a responsive 2-column GridView.
+/// Displays a photographer's portfolio images in a responsive 2-column GridView with luxury styling.
 class PortfolioGrid extends StatelessWidget {
   final List<String> imageUrls;
 
@@ -11,16 +13,26 @@ class PortfolioGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrls.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.photo_library_outlined, size: 64, color: Colors.grey.shade400),
-            const SizedBox(height: 12),
-            Text(
-              'No portfolio images yet.',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.photo_library_outlined,
+                size: 56,
+                color: Color(AppConstants.primaryColor),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'No portfolio images added yet.',
+                style: GoogleFonts.plusJakartaSans(
+                  color: const Color(AppConstants.textMutedValue),
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -31,31 +43,73 @@ class PortfolioGrid extends StatelessWidget {
       itemCount: imageUrls.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 1.0,
       ),
       itemBuilder: (context, index) {
         final url = imageUrls[index];
         return GestureDetector(
-          onTap: () => _openFullImage(context, url),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: CachedNetworkImage(
-              imageUrl: url,
-              fit: BoxFit.cover,
-              placeholder: (_, __) => Container(
-                color: Colors.grey.shade200,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+          onTap: () => _openFullImage(context, url, index),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(AppConstants.surfaceBorderValue),
+                width: 1,
               ),
-              errorWidget: (_, __, ___) => Container(
-                color: Colors.grey.shade200,
-                child: const Center(
-                  child: Icon(Icons.broken_image_outlined, color: Colors.grey),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
-              ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    color: const Color(0xFF181B26),
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Color(AppConstants.primaryColor),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Image.network(
+                    url,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: const Color(0xFF181B26),
+                      child: const Center(
+                        child: Icon(Icons.broken_image_outlined, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 6,
+                  right: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.fullscreen,
+                      color: Color(AppConstants.primaryColor),
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -63,22 +117,56 @@ class PortfolioGrid extends StatelessWidget {
     );
   }
 
-  void _openFullImage(BuildContext context, String url) {
+  void _openFullImage(BuildContext context, String url, int index) {
     showDialog(
       context: context,
       builder: (_) => Dialog(
-        backgroundColor: Colors.black,
-        insetPadding: const EdgeInsets.all(12),
-        child: CachedNetworkImage(
-          imageUrl: url,
-          fit: BoxFit.contain,
-          errorWidget: (_, __, ___) => const Icon(
-            Icons.broken_image_outlined,
-            color: Colors.white,
-            size: 48,
-          ),
+        backgroundColor: Colors.black.withValues(alpha: 0.9),
+        insetPadding: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            InteractiveViewer(
+              minScale: 0.5,
+              maxScale: 4.0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                  fit: BoxFit.contain,
+                  placeholder: (_, __) => const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(AppConstants.primaryColor),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(
+                    Icons.broken_image_outlined,
+                    color: Colors.white,
+                    size: 48,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

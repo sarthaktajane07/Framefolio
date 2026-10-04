@@ -10,6 +10,8 @@ class PhotographerModel {
   final String bio;
   final List<String> portfolioImages;
   final List<String> packages;
+  final double averageRating;
+  final int reviewCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -22,6 +24,8 @@ class PhotographerModel {
     required this.bio,
     required this.portfolioImages,
     required this.packages,
+    this.averageRating = 0.0,
+    this.reviewCount = 0,
     this.createdAt,
     this.updatedAt,
   });
@@ -35,6 +39,8 @@ class PhotographerModel {
         'bio': bio,
         'portfolioImages': portfolioImages,
         'packages': packages,
+        'averageRating': averageRating,
+        'reviewCount': reviewCount,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       };
@@ -50,6 +56,8 @@ class PhotographerModel {
       bio: data['bio'] as String? ?? '',
       portfolioImages: List<String>.from(data['portfolioImages'] ?? []),
       packages: List<String>.from(data['packages'] ?? ['Basic', 'Standard', 'Premium']),
+      averageRating: (data['averageRating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: (data['reviewCount'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -65,5 +73,7 @@ class PhotographerModel {
         'bio': bio,
         'portfolioImages': portfolioImages,
         'packages': packages,
+        'averageRating': averageRating,
+        'reviewCount': reviewCount,
       };
 }

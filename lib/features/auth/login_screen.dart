@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../models/user_model.dart';
 import '../../core/constants/app_constants.dart';
 import '../home/home_screen.dart';
 
-/// Login screen with email/password Firebase Authentication.
+/// Cinematic Editorial Login screen with email/password authentication.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -31,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
       if (!mounted) return;
-      // Fetch role and route
       final profile = await _authService.fetchCurrentUserProfile();
       if (!mounted) return;
       _navigateHome(profile);
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.red.shade800,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -90,49 +90,67 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(AppConstants.backgroundColorValue),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Logo & title ──────────────────────────────────────────
-                const SizedBox(height: 16),
-                const Icon(
-                  Icons.camera_rounded,
-                  size: 72,
-                  color: Color(AppConstants.accentColor),
+                // Header (Requirement 21)
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(AppConstants.cardColorValue),
+                      border: Border.all(color: const Color(AppConstants.surfaceBorderValue)),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt_outlined,
+                      size: 40,
+                      color: Color(AppConstants.textPrimaryValue),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  AppConstants.appName,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                        color: const Color(AppConstants.primaryColor),
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Capture. Share. Book.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
 
-                // ── Form ─────────────────────────────────────────────────
+                Text(
+                  'Welcome back.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(AppConstants.textPrimaryValue),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Continue creating stories.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: const Color(AppConstants.textSecondaryValue),
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 36),
+
+                // Form
                 Form(
                   key: _formKey,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      _fieldLabel('EMAIL ADDRESS'),
+                      const SizedBox(height: 6),
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
+                        style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                         decoration: const InputDecoration(
-                          labelText: 'Email Address',
+                          hintText: 'Enter your email',
                           prefixIcon: Icon(Icons.email_outlined),
                         ),
                         validator: (v) {
@@ -143,12 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
+
+                      _fieldLabel('PASSWORD'),
+                      const SizedBox(height: 6),
                       TextFormField(
                         controller: _passwordController,
                         obscureText: _obscurePassword,
+                        style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          hintText: 'Enter password',
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -169,20 +191,42 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       const SizedBox(height: 28),
+
                       ElevatedButton(
                         onPressed: _isLoading ? null : _signIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(AppConstants.textPrimaryValue),
+                          foregroundColor: const Color(AppConstants.backgroundColorValue),
+                          minimumSize: const Size.fromHeight(52),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
                         child: _isLoading
                             ? const SizedBox(
                                 height: 22,
                                 width: 22,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: Color(AppConstants.backgroundColorValue),
                                   strokeWidth: 2.5,
                                 ),
                               )
-                            : const Text('Sign In'),
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'SIGN IN',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.arrow_forward_rounded, size: 16),
+                                ],
+                              ),
                       ),
                       const SizedBox(height: 16),
+
                       OutlinedButton(
                         onPressed: _isLoading
                             ? null
@@ -191,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (_) => const RegisterScreen(),
                                   ),
                                 ),
-                        child: const Text('Create Account'),
+                        child: const Text('Create Photographer Account'),
                       ),
                     ],
                   ),
@@ -203,13 +247,19 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Widget _fieldLabel(String text) => Text(
+        text,
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.bold,
+          fontSize: 10,
+          letterSpacing: 1.8,
+          color: const Color(AppConstants.primaryColor),
+        ),
+      );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// REGISTER SCREEN
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// Registration screen: collects name, email, password, role.
+/// Registration screen for clients & photographers.
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -273,7 +323,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red.shade700,
+        backgroundColor: Colors.red.shade800,
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -291,25 +341,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
+      backgroundColor: const Color(AppConstants.backgroundColorValue),
+      appBar: AppBar(
+        title: Text(
+          'Create Account',
+          style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Progress step indicator
-                _buildStepIndicator(),
-                const SizedBox(height: 28),
-
-                // Full name
+                _fieldLabel('FULL NAME'),
+                const SizedBox(height: 6),
                 TextFormField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
+                  style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                   decoration: const InputDecoration(
-                    labelText: 'Full Name',
+                    hintText: 'Enter your full name',
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (v) =>
@@ -317,12 +371,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Email
+                _fieldLabel('EMAIL ADDRESS'),
+                const SizedBox(height: 6),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                   decoration: const InputDecoration(
-                    labelText: 'Email Address',
+                    hintText: 'Enter your email',
                     prefixIcon: Icon(Icons.email_outlined),
                   ),
                   validator: (v) {
@@ -335,12 +391,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password
+                _fieldLabel('PASSWORD'),
+                const SizedBox(height: 6),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
+                  style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    hintText: 'At least 6 characters',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -361,12 +419,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Confirm password
+                _fieldLabel('CONFIRM PASSWORD'),
+                const SizedBox(height: 6),
                 TextFormField(
                   controller: _confirmController,
                   obscureText: true,
+                  style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textPrimaryValue)),
                   decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
+                    hintText: 'Repeat password',
                     prefixIcon: Icon(Icons.lock_outline),
                   ),
                   validator: (v) {
@@ -378,14 +438,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Role selector
-                Text(
-                  'I am a…',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
+                _fieldLabel('ACCOUNT TYPE'),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -411,18 +464,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 ElevatedButton(
                   onPressed: _isLoading ? null : _register,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(AppConstants.textPrimaryValue),
+                    foregroundColor: const Color(AppConstants.backgroundColorValue),
+                    minimumSize: const Size.fromHeight(52),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                   child: _isLoading
                       ? const SizedBox(
                           height: 22,
                           width: 22,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: Color(AppConstants.backgroundColorValue),
                             strokeWidth: 2.5,
                           ),
                         )
-                      : const Text('Create Account'),
+                      : const Text('CREATE ACCOUNT'),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 Center(
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
@@ -437,17 +496,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildStepIndicator() {
-    return Row(
-      children: [
-        _StepDot(label: '1', active: true, done: false),
-        Expanded(child: Container(height: 2, color: const Color(AppConstants.accentColor))),
-        _StepDot(label: '2', active: true, done: false),
-        Expanded(child: Container(height: 2, color: Colors.grey.shade300)),
-        _StepDot(label: '3', active: false, done: false),
-      ],
-    );
-  }
+  Widget _fieldLabel(String text) => Text(
+        text,
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.bold,
+          fontSize: 10,
+          letterSpacing: 1.8,
+          color: const Color(AppConstants.primaryColor),
+        ),
+      );
 }
 
 class _RoleOption extends StatelessWidget {
@@ -470,67 +527,42 @@ class _RoleOption extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             color: selected
-                ? const Color(AppConstants.primaryColor)
-                : const Color(0xFFF0EBE3),
+                ? const Color(AppConstants.primaryColor).withValues(alpha: 0.15)
+                : const Color(AppConstants.cardColorValue),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected
                   ? const Color(AppConstants.primaryColor)
-                  : Colors.grey.shade300,
+                  : const Color(AppConstants.surfaceBorderValue),
+              width: selected ? 1.5 : 1.0,
             ),
           ),
           child: Column(
             children: [
               Icon(
                 icon,
-                color: selected ? Colors.white : const Color(AppConstants.accentColor),
-                size: 28,
+                color: selected
+                    ? const Color(AppConstants.primaryColor)
+                    : const Color(AppConstants.textMutedValue),
+                size: 26,
               ),
               const SizedBox(height: 6),
               Text(
                 label,
-                style: TextStyle(
-                  color: selected ? Colors.white : const Color(AppConstants.primaryColor),
-                  fontWeight: FontWeight.w600,
+                style: GoogleFonts.plusJakartaSans(
+                  color: selected
+                      ? const Color(AppConstants.primaryColor)
+                      : const Color(AppConstants.textPrimaryValue),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _StepDot extends StatelessWidget {
-  final String label;
-  final bool active;
-  final bool done;
-
-  const _StepDot({
-    required this.label,
-    required this.active,
-    required this.done,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = done
-        ? const Color(AppConstants.accentColor)
-        : active
-            ? const Color(AppConstants.accentColor)
-            : Colors.grey.shade300;
-    return Container(
-      width: 28,
-      height: 28,
-      decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-      alignment: Alignment.center,
-      child: Text(
-        done ? '✓' : label,
-        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
       ),
     );
   }

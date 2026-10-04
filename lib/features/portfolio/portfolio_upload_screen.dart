@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/constants/app_constants.dart';
@@ -13,7 +14,7 @@ import '../../services/firestore_service.dart';
 class PortfolioUploadScreen extends StatefulWidget {
   final String photographerUid;
 
-  const PortfolioUploadScreen({super.key, required this.photographerUid});
+  const PortfolioUploadScreen({super.key, this.photographerUid = ''});
 
   @override
   State<PortfolioUploadScreen> createState() => _PortfolioUploadScreenState();
@@ -39,7 +40,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
 
   final ImagePicker _picker = ImagePicker();
 
-  // ── Pick cover photo ───────────────────────────────────────────────────────
   Future<void> _pickCoverPhoto() async {
     final file = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -48,7 +48,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
     if (file != null) setState(() => _coverImage = file);
   }
 
-  // ── Pick portfolio images ──────────────────────────────────────────────────
   Future<void> _pickPortfolioImages() async {
     final files = await _picker.pickMultiImage(imageQuality: 80);
     if (files.isNotEmpty) {
@@ -60,7 +59,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
     setState(() => _portfolioImages.removeAt(index));
   }
 
-  // ── Upload and publish ─────────────────────────────────────────────────────
   Future<void> _publish() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -81,19 +79,17 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
     setState(() {
       _isUploading = true;
       _uploadedCount = 0;
-      _totalToUpload = 1 + _portfolioImages.length; // cover + portfolio
+      _totalToUpload = 1 + _portfolioImages.length;
       _uploadStatus = 'Uploading cover photo…';
     });
 
     try {
-      // 1. Upload cover photo
       final coverUrl = await _storageService.uploadCoverPhoto(_coverImage!, uid);
       setState(() {
         _uploadedCount = 1;
         _uploadStatus = 'Uploading portfolio images…';
       });
 
-      // 2. Upload portfolio images sequentially (async/await)
       final List<String> portfolioUrls = [];
       for (int i = 0; i < _portfolioImages.length; i++) {
         final url = await _storageService.uploadPortfolioImage(
@@ -108,7 +104,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
         });
       }
 
-      // 3. Save to Firestore
       setState(() => _uploadStatus = 'Saving to database…');
       final model = PhotographerModel(
         photographerId: uid,
@@ -137,16 +132,20 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 10),
-            Text('Portfolio Published!'),
+            const Icon(Icons.check_circle, color: Color(AppConstants.primaryColor), size: 28),
+            const SizedBox(width: 10),
+            Text(
+              'Portfolio Live!',
+              style: GoogleFonts.playfairDisplay(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
           ],
         ),
-        content: const Text(
-          'Your portfolio is now live and visible to clients.',
+        content: Text(
+          'Your photography portfolio is published and visible to clients.',
+          style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textMutedValue)),
         ),
         actions: [
           ElevatedButton(
@@ -187,7 +186,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
     );
   }
 
-  // ── Upload progress UI ─────────────────────────────────────────────────────
   Widget _buildUploadProgress() {
     final progress = _totalToUpload > 0 ? _uploadedCount / _totalToUpload : 0.0;
     return Center(
@@ -199,30 +197,30 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
             const Icon(
               Icons.cloud_upload_outlined,
               size: 64,
-              color: Color(AppConstants.accentColor),
+              color: Color(AppConstants.primaryColor),
             ),
             const SizedBox(height: 24),
             Text(
               _uploadStatus,
-              style: const TextStyle(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(AppConstants.primaryColor),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: Colors.grey.shade200,
-              color: const Color(AppConstants.accentColor),
+              backgroundColor: const Color(0xFF181B26),
+              color: const Color(AppConstants.primaryColor),
               minHeight: 8,
               borderRadius: BorderRadius.circular(4),
             ),
             const SizedBox(height: 10),
             Text(
               '$_uploadedCount / $_totalToUpload uploaded',
-              style: TextStyle(color: Colors.grey.shade600),
+              style: GoogleFonts.plusJakartaSans(color: const Color(AppConstants.textMutedValue)),
             ),
           ],
         ),
@@ -230,7 +228,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
     );
   }
 
-  // ── Form UI ────────────────────────────────────────────────────────────────
   Widget _buildForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -239,11 +236,9 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Progress cue
             _buildProgressSteps(),
             const SizedBox(height: 24),
 
-            // ── Section: Basic Info ──────────────────────────────────
             _sectionLabel('Basic Information'),
             const SizedBox(height: 12),
             TextFormField(
@@ -292,20 +287,18 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
               controller: _bioController,
               maxLines: 4,
               decoration: const InputDecoration(
-                labelText: 'Bio / About You',
+                labelText: 'Bio / Story',
                 prefixIcon: Icon(Icons.notes_outlined),
                 alignLabelWithHint: true,
               ),
             ),
             const SizedBox(height: 24),
 
-            // ── Section: Cover Photo ─────────────────────────────────
             _sectionLabel('Cover Photo'),
             const SizedBox(height: 12),
             _buildCoverPhotoPicker(),
             const SizedBox(height: 24),
 
-            // ── Section: Portfolio Images ────────────────────────────
             _sectionLabel('Portfolio Images'),
             const SizedBox(height: 12),
             if (_portfolioImages.isNotEmpty) _buildPortfolioPreview(),
@@ -321,7 +314,6 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
             ),
             const SizedBox(height: 32),
 
-            // ── Publish button ───────────────────────────────────────
             ElevatedButton.icon(
               onPressed: _publish,
               icon: const Icon(Icons.cloud_upload_outlined),
@@ -341,14 +333,17 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
         Expanded(
           child: Container(
             height: 2,
-            color: const Color(AppConstants.accentColor),
+            color: const Color(AppConstants.primaryColor),
           ),
         ),
         _ProgressStep(number: 2, label: 'Photos', active: true),
         Expanded(
-          child: Container(height: 2, color: Colors.grey.shade300),
+          child: Container(
+            height: 2,
+            color: const Color(AppConstants.primaryColor),
+          ),
         ),
-        _ProgressStep(number: 3, label: 'Publish', active: false),
+        _ProgressStep(number: 3, label: 'Publish', active: true),
       ],
     );
   }
@@ -356,10 +351,10 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
   Widget _sectionLabel(String text) {
     return Text(
       text,
-      style: const TextStyle(
+      style: GoogleFonts.playfairDisplay(
         fontWeight: FontWeight.bold,
-        fontSize: 15,
-        color: Color(AppConstants.primaryColor),
+        fontSize: 18,
+        color: Colors.white,
       ),
     );
   }
@@ -371,12 +366,12 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
         height: 180,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: const Color(0xFFF0EBE3),
-          borderRadius: BorderRadius.circular(12),
+          color: const Color(0xFF181B26),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: _coverImage != null
-                ? const Color(AppConstants.accentColor)
-                : Colors.grey.shade300,
+                ? const Color(AppConstants.primaryColor)
+                : const Color(AppConstants.surfaceBorderValue),
             width: 1.5,
           ),
         ),
@@ -387,17 +382,19 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
                   const Icon(
                     Icons.add_a_photo_outlined,
                     size: 40,
-                    color: Color(AppConstants.accentColor),
+                    color: Color(AppConstants.primaryColor),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     'Tap to select cover photo',
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: const Color(AppConstants.textMutedValue),
+                    ),
                   ),
                 ],
               )
             : ClipRRect(
-                borderRadius: BorderRadius.circular(11),
+                borderRadius: BorderRadius.circular(13),
                 child: kIsWeb
                     ? Image.network(_coverImage!.path, fit: BoxFit.cover,
                         width: double.infinity)
@@ -424,7 +421,7 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
           fit: StackFit.expand,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
               child: kIsWeb
                   ? Image.network(file.path, fit: BoxFit.cover)
                   : Image.file(File(file.path), fit: BoxFit.cover),
@@ -436,7 +433,7 @@ class _PortfolioUploadScreenState extends State<PortfolioUploadScreen> {
                 onTap: () => _removePortfolioImage(index),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: Colors.black.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(3),
@@ -464,9 +461,6 @@ class _ProgressStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active
-        ? const Color(AppConstants.accentColor)
-        : Colors.grey.shade400;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -474,22 +468,31 @@ class _ProgressStep extends StatelessWidget {
           width: 28,
           height: 28,
           decoration: BoxDecoration(
-            color: active ? const Color(AppConstants.accentColor) : Colors.grey.shade200,
+            color: active ? const Color(AppConstants.primaryColor) : const Color(0xFF181B26),
             shape: BoxShape.circle,
+            border: Border.all(color: const Color(AppConstants.primaryColor)),
           ),
           alignment: Alignment.center,
           child: Text(
             '$number',
-            style: TextStyle(
-              color: active ? Colors.white : Colors.grey.shade500,
+            style: GoogleFonts.plusJakartaSans(
+              color: active ? const Color(0xFF0B0C10) : Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
           ),
         ),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 10, color: color)),
+        Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 10,
+            color: const Color(AppConstants.primaryColor),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
 }
+

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../constants/app_constants.dart';
 
-/// Reusable centered loading indicator.
+/// Reusable centered loading indicator styled for FrameFolio.
 class LoadingWidget extends StatelessWidget {
   final String? message;
 
@@ -12,12 +14,18 @@ class LoadingWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(),
+          const CircularProgressIndicator(
+            color: Color(AppConstants.primaryColor),
+            strokeWidth: 2.5,
+          ),
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(
               message!,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(AppConstants.textMutedValue),
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -26,3 +34,4 @@ class LoadingWidget extends StatelessWidget {
     );
   }
 }
+

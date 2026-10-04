@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
+import 'features/splash/splash_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/home/home_screen.dart';
 import 'services/auth_service.dart';
 
-/// Root widget. Decides between LoginScreen and HomeScreen based on auth state.
+/// Root widget. Starts with SplashScreen, then routes via _AuthGate.
 class FrameFolioApp extends StatelessWidget {
   const FrameFolioApp({super.key});
 
@@ -16,14 +17,14 @@ class FrameFolioApp extends StatelessWidget {
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: appTheme,
-      home: const _AuthGate(),
+      home: const SplashScreen(),
     );
   }
 }
 
 /// Listens to Firebase auth state and routes accordingly.
-class _AuthGate extends StatelessWidget {
-  const _AuthGate();
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context) {
