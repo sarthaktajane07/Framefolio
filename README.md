@@ -12,21 +12,29 @@
 
 ---
 
+## 🌐 Live Web App & Mobile APK
+
+* **🌐 Live Web Application:** [https://framefolio-efc6a.web.app](https://framefolio-efc6a.web.app) *(Firebase Hosting CDN)*
+* **📱 Direct Android Release APK:** [FrameFolio.apk](FrameFolio.apk) *(Downloadable production build)*
+* **📄 Flutter Viva Preparation Guide (.docx):** [FrameFolio_Flutter_Viva_Ready_Document.docx](FrameFolio_Flutter_Viva_Ready_Document.docx)
+
+---
+
 ## 📋 Table of Contents
 
+- [Live Web App & Mobile APK](#-live-web-app--mobile-apk)
 - [Project Overview](#-project-overview)
 - [Problem Statement](#-problem-statement)
 - [Key Features](#-key-features)
+- [Rating & Review System](#-rating--review-system)
 - [Tech Stack](#-tech-stack)
 - [App Architecture](#-app-architecture)
 - [File Structure](#-file-structure)
 - [Dart Files Explained](#-dart-files-explained)
 - [App Flow](#-app-flow)
-- [Screenshots](#-screenshots)
 - [Setup & Installation](#-setup--installation)
 - [Firebase Configuration](#-firebase-configuration)
 - [Cloudinary Configuration](#-cloudinary-configuration)
-- [Demo Data](#-demo-data)
 - [Academic Details](#-academic-details)
 
 ---
