@@ -16,7 +16,6 @@
 
 * **🌐 Live Web Application:** [https://framefolio-efc6a.web.app](https://framefolio-efc6a.web.app) *(Firebase Hosting CDN)*
 * **📱 Direct Android Release APK:** [Download FrameFolio.apk](https://github.com/sarthaktajane07/Framefolio/raw/main/FrameFolio.apk) *(Production Build)*
-* **📄 Flutter Viva Preparation Guide (.docx):** [Download Viva Guide (.docx)](https://github.com/sarthaktajane07/Framefolio/raw/main/FrameFolio_Flutter_Viva_Ready_Document.docx) *(Semester Viva Q&A)*
 
 ---
 
