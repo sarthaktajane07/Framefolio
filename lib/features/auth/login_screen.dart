@@ -55,9 +55,12 @@ class _LoginScreenState extends State<LoginScreen> {
   String _mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
       case 'user-not-found':
-        return 'No account found with this email.';
+        return 'No account found with this email. Click "Create Photographer Account" below.';
       case 'wrong-password':
         return 'Incorrect password. Please try again.';
+      case 'invalid-credential':
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return 'Incorrect email or password, or account does not exist. Click "Create Photographer Account" below to register.';
       case 'invalid-email':
         return 'Please enter a valid email address.';
       case 'user-disabled':

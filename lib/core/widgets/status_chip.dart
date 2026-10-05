@@ -3,10 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class StatusChip extends StatelessWidget {
   final String status;
+  final VoidCallback? onTap;
 
   const StatusChip({
     super.key,
     required this.status,
+    this.onTap,
   });
 
   @override
@@ -41,7 +43,7 @@ class StatusChip extends StatelessWidget {
       dot = const Color(0xFFFFC107);
     }
 
-    return Container(
+    final chipWidget = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: bg,
@@ -70,6 +72,14 @@ class StatusChip extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (onTap == null) return chipWidget;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: chipWidget,
     );
   }
 }

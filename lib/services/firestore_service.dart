@@ -216,4 +216,18 @@ class FirestoreService {
       return list.where((b) => b.photographerId == photographerId).toList();
     });
   }
+
+  /// Update status of a booking document (e.g. pending -> confirmed, cancelled, completed).
+  Future<void> updateBookingStatus({
+    required String bookingId,
+    required String status,
+  }) async {
+    await _db
+        .collection(AppConstants.bookingsCollection)
+        .doc(bookingId)
+        .update({
+      'status': status,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
 }
